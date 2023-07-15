@@ -10,7 +10,13 @@ set(PRISM_MATH
         )
 source_group(Math FILES ${PRISM_MATH})
 
-add_library(prism STATIC ${PRISM_MATH})
+set(PRISM_SAMPLERS
+        samplers/Sampler.cpp
+        samplers/Sampler.hpp
+        )
+source_group(Samplers FILES ${PRISM_SAMPLERS})
+
+add_library(prism STATIC ${PRISM_MATH} ${PRISM_SAMPLERS})
 target_include_directories(prism PUBLIC .)
 target_link_libraries(prism PUBLIC glog::glog)
 

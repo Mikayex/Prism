@@ -14,9 +14,9 @@ TYPED_TEST(Vector2Test, Constructors) {
   using T = TypeParam;
   using V = Vector2<T>;
 
-  const V default_vector;
-  EXPECT_EQ(default_vector.x, T{});
-  EXPECT_EQ(default_vector.y, T{});
+  const V defaultVector;
+  EXPECT_EQ(defaultVector.x, T{});
+  EXPECT_EQ(defaultVector.y, T{});
 
   const V v(-1, 2);
   EXPECT_EQ(v.x, -1);
@@ -31,8 +31,8 @@ TYPED_TEST(Vector2Test, hasNaN) {
   using T = TypeParam;
   using V = Vector2<T>;
 
-  const V default_vector;
-  EXPECT_FALSE(default_vector.hasNaN());
+  const V defaultVector;
+  EXPECT_FALSE(defaultVector.hasNaN());
 
   const V v(-1, 2);
   EXPECT_FALSE(v.hasNaN());

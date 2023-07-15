@@ -14,10 +14,10 @@ TYPED_TEST(Vector3Test, Constructors) {
   using T = TypeParam;
   using V = Vector3<T>;
 
-  const V default_vector;
-  EXPECT_EQ(default_vector.x, T{});
-  EXPECT_EQ(default_vector.y, T{});
-  EXPECT_EQ(default_vector.z, T{});
+  const V defaultVector;
+  EXPECT_EQ(defaultVector.x, T{});
+  EXPECT_EQ(defaultVector.y, T{});
+  EXPECT_EQ(defaultVector.z, T{});
 
   const V v(-1, 2, 3);
   EXPECT_EQ(v.x, -1);
@@ -34,8 +34,8 @@ TYPED_TEST(Vector3Test, hasNaN) {
   using T = TypeParam;
   using V = Vector3<T>;
 
-  const V default_vector;
-  EXPECT_FALSE(default_vector.hasNaN());
+  const V defaultVector;
+  EXPECT_FALSE(defaultVector.hasNaN());
 
   const V v(-1, 2, 3);
   EXPECT_FALSE(v.hasNaN());

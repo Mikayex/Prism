@@ -2,7 +2,6 @@
 #define PRISM_VECTOR3_HPP
 #include <glog/logging.h>
 
-#include <cassert>
 #include <cmath>
 #include <limits>
 

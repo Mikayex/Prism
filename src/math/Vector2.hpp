@@ -1,6 +1,7 @@
 #ifndef PRISM_VECTOR2_HPP
 #define PRISM_VECTOR2_HPP
-#include <cassert>
+#include <glog/logging.h>
+
 #include <cmath>
 #include <limits>
 
@@ -12,28 +13,28 @@ public:
 
   Vector2() = default;
   Vector2(T x, T y) : x(x), y(y) {
-    assert(!hasNaN());
+    DCHECK(!hasNaN());
   }
 
   Vector2(const Vector2<T> &v) : x(v.x), y(v.y) {
-    assert(!v.hasNaN());
+    DCHECK(!v.hasNaN());
   }
 
   Vector2<T> &operator=(const Vector2<T> &v) {
-    assert(!v.hasNaN());
+    DCHECK(!v.hasNaN());
     x = v.x;
     y = v.y;
     return *this;
   }
 
   T operator[](int i) const {
-    assert(i >= 0 && i <= 1);
+    DCHECK(i >= 0 && i <= 1);
     if (i == 0) return x;
     return y;
   }
 
   T &operator[](int i) {
-    assert(i >= 0 && i <= 1);
+    DCHECK(i >= 0 && i <= 1);
     if (i == 0) return x;
     return y;
   }

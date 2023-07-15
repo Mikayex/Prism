@@ -1,5 +1,7 @@
 #ifndef PRISM_VECTOR3_HPP
 #define PRISM_VECTOR3_HPP
+#include <glog/logging.h>
+
 #include <cassert>
 #include <cmath>
 #include <limits>
@@ -12,15 +14,15 @@ public:
 
   Vector3() = default;
   Vector3(T x, T y, T z) : x(x), y(y), z(z) {
-    assert(!hasNaN());
+    DCHECK(!hasNaN());
   }
 
   Vector3(const Vector3<T> &v) : x(v.x), y(v.y), z(v.z) {
-    assert(!v.hasNaN());
+    DCHECK(!v.hasNaN());
   }
 
   Vector3<T> &operator=(const Vector3<T> &v) {
-    assert(!v.hasNaN());
+    DCHECK(!v.hasNaN());
     x = v.x;
     y = v.y;
     z = v.z;
@@ -28,14 +30,14 @@ public:
   }
 
   T operator[](int i) const {
-    assert(i >= 0 && i <= 2);
+    DCHECK(i >= 0 && i <= 2);
     if (i == 0) return x;
     if (i == 1) return y;
     return z;
   }
 
   T &operator[](int i) {
-    assert(i >= 0 && i <= 2);
+    DCHECK(i >= 0 && i <= 2);
     if (i == 0) return x;
     if (i == 1) return y;
     return z;

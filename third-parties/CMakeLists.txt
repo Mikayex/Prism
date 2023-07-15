@@ -1,5 +1,15 @@
 set(CMAKE_FOLDER third-parties)
 
+# Google Log
+set(WITH_GFLAGS OFF CACHE BOOL "" FORCE)
+set(WITH_GTEST OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+if (WIN32)
+    #add_compile_definitions(GOOGLE_GLOG_DLL_DECL=)
+endif ()
+add_subdirectory(glog)
+
+# Google Test
 if (PRISM_TESTS)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)

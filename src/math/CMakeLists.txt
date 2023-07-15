@@ -10,3 +10,4 @@ set(PRISM_MATH_CPP
 
 add_library(prism_math STATIC ${PRISM_MATH_HPP} ${PRISM_MATH_CPP})
 target_include_directories(prism_math PUBLIC ..)
+target_link_libraries(prism_math PUBLIC glog::glog)

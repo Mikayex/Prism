@@ -11,4 +11,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+option(PRISM_TESTS "Build Prism tests" ON)
+
+add_subdirectory(third-parties)
 add_subdirectory(src)
+
+if (PRISM_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif ()

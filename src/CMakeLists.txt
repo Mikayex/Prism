@@ -1,4 +1,8 @@
 set(PRISM_MATH
+        math/Point2.cpp
+        math/Point2.hpp
+        math/Point3.cpp
+        math/Point3.hpp
         math/Vector2.cpp
         math/Vector2.hpp
         math/Vector3.cpp

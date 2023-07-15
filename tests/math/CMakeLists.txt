@@ -1,5 +1,7 @@
 add_executable(
         prism_math_tests
+        Point2_tests.cpp
+        Point3_tests.cpp
         Vector2_tests.cpp
         Vector3_tests.cpp
 )

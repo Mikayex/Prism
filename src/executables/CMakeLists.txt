@@ -1,2 +1,2 @@
-add_executable(prism-rt main.cpp)
+add_executable(prism-rt prism-rt.cpp)
 target_link_libraries(prism-rt glog::glog)

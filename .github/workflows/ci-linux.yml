@@ -1,0 +1,59 @@
+name: CMake
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        compilers:
+          - {
+            cc: "gcc-9",
+            cxx: "g++-9",
+          }
+          - {
+            cc: "gcc-10",
+            cxx: "g++-10",
+          }
+          - {
+            cc: "clang-10",
+            cxx: "clang++-10",
+          }
+          - {
+            cc: "clang-11",
+            cxx: "clang++-11",
+          }
+      fail-fast: false
+
+    runs-on: ubuntu-20.04
+    name: Build with ${{ matrix.compilers.cxx }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Get cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Install compilers
+        run: sudo apt-get -y install ${{ matrix.compilers.cc }} ${{ matrix.compilers.cxx }}
+
+      - name: Configure CMake
+        env:
+          CC: ${{ matrix.compilers.cc }}
+          CXX: ${{ matrix.compilers.cxx }}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+      - name: Build
+        run: cmake --parallel --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}

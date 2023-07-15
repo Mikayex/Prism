@@ -1,0 +1,13 @@
+BasedOnStyle: Google
+AccessModifierOffset: -2
+IndentPPDirectives: AfterHash
+IndentWidth: 2
+Language: Cpp
+Standard: c++17
+ColumnLimit: 120
+BreakBeforeTernaryOperators: true
+AlignOperands: true
+PenaltyBreakAssignment: 120
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: Yes
+SpaceAfterTemplateKeyword: false

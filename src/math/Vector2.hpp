@@ -104,6 +104,14 @@ public:
       return false;
     }
   }
+
+  [[nodiscard]] Float lengthSquared() const {
+    return x * x + y * y;
+  }
+
+  [[nodiscard]] Float length() const {
+    return std::sqrt(lengthSquared());
+  }
 };
 
 extern template class Vector2<Float, false>;
@@ -144,6 +152,11 @@ inline Point2<T> &operator-=(Point2<T> &p, const Vector2<T> &v) {
   p.x -= v.x;
   p.y -= v.y;
   return p;
+}
+
+template<typename T>
+[[nodiscard]] Vector2<T> normalize(const Vector2<T> &v) {
+  return v / v.length();
 }
 
 using Point2f = Vector2<Float, true>;

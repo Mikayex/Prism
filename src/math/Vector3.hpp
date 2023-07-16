@@ -18,6 +18,10 @@ public:
     DCHECK(!hasNaN());
   }
 
+  Vector3(Vector3<T, true> from, Vector3<T, true> to) : x(to.x - from.x), y(to.y - from.y), z(to.z - from.z) {
+    DCHECK(!hasNaN());
+  }
+
   Vector3(const Vector3<T, IsPoint> &v) : x(v.x), y(v.y), z(v.z) {
     DCHECK(!v.hasNaN());
   }
@@ -111,6 +115,14 @@ public:
       return false;
     }
   }
+
+  [[nodiscard]] Float lengthSquared() const {
+    return x * x + y * y + z * z;
+  }
+
+  [[nodiscard]] Float length() const {
+    return std::sqrt(lengthSquared());
+  }
 };
 
 extern template class Vector3<Float, false>;
@@ -153,6 +165,11 @@ inline Point3<T> &operator-=(Point3<T> &p, const Vector3<T> &v) {
   p.y -= v.y;
   p.z -= v.z;
   return p;
+}
+
+template<typename T>
+[[nodiscard]] Vector3<T> normalize(const Vector3<T> &v) {
+  return v / v.length();
 }
 
 using Point3f = Point3<Float>;

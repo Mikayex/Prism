@@ -1,17 +1,31 @@
 #include <glog/logging.h>
 #include <stb_image_write.h>
 
+#include <Ray.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <math/Functions.hpp>
+#include <math/Vector3.hpp>
 #include <memory>
 
+using namespace Prism;
+
+constexpr Float aspectRatio = 16.0 / 9.0;
 constexpr int width = 800;
-constexpr int height = 600;
+constexpr int height = static_cast<int>(width / aspectRatio);
 constexpr int numPixels = width * height;
 
+namespace {
 void logProgress(int x, int y) {
   LOG_EVERY_T(INFO, 0.25) << ((100.0 * y * width + x) / numPixels) << '%';
 }
+
+Vector3f rayColor(const Ray &ray) {
+  const auto normalizedDirection = normalize(ray.d);
+  const auto t = Float(0.5) * (normalizedDirection.y + Float(1));
+  return mix(Vector3f(1.0, 1.0, 1.0), Vector3f(0.5, 0.7, 1.0), t);
+}
+}  // namespace
 
 int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
@@ -22,21 +36,31 @@ int main(int argc, char **argv) {
 
   const auto image_data = std::make_unique<std::uint8_t[]>(numPixels * 3);
 
+  constexpr Float viewportHeight = 2.0;
+  constexpr Float viewportWidth = aspectRatio * viewportHeight;
+  constexpr Float focalLength = 1.0;
+
+  auto origin = Point3f(0, 0, 0);
+  auto horizontal = Vector3f(viewportWidth, 0, 0);
+  auto vertical = Vector3f(0, viewportHeight, 0);
+  auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vector3f(0, 0, focalLength);
+
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
       logProgress(x, y);
 
-      const auto r = static_cast<float>(x) / (width - 1);
-      const auto g = static_cast<float>(y) / (height - 1);
-      const auto b = 0.25;
+      const auto u = static_cast<Float>(x) / (width - 1);
+      const auto v = Float(1) - static_cast<Float>(y) / (height - 1);
 
-      const auto ir = static_cast<std::uint8_t>(255.999 * r);
-      const auto ig = static_cast<std::uint8_t>(255.999 * g);
-      const auto ib = static_cast<std::uint8_t>(255.999 * b);
+      Vector3f direction = Vector3f(origin, lower_left_corner + horizontal * u + vertical * v);
+      Ray ray(origin, direction);
 
-      image_data[y * width * 3 + x * 3 + 0] = ir;
-      image_data[y * width * 3 + x * 3 + 1] = ig;
-      image_data[y * width * 3 + x * 3 + 2] = ib;
+      const auto color = rayColor(ray);
+      const auto color8 = color * 255.999;
+
+      image_data[y * width * 3 + x * 3 + 0] = static_cast<std::uint8_t>(color8.x);
+      image_data[y * width * 3 + x * 3 + 1] = static_cast<std::uint8_t>(color8.y);
+      image_data[y * width * 3 + x * 3 + 2] = static_cast<std::uint8_t>(color8.z);
     }
   }
 

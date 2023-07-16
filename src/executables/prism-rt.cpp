@@ -5,6 +5,14 @@
 #include <iostream>
 #include <memory>
 
+constexpr int width = 800;
+constexpr int height = 600;
+constexpr int numPixels = width * height;
+
+void logProgress(int x, int y) {
+  LOG_EVERY_T(INFO, 0.25) << ((100.0 * y * width + x) / numPixels) << '%';
+}
+
 int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
   FLAGS_logtostdout = true;
@@ -12,13 +20,12 @@ int main(int argc, char **argv) {
 
   DLOG(WARNING) << "Using debug build";
 
-  constexpr int width = 800;
-  constexpr int height = 600;
-
-  const auto image_data = std::make_unique<std::uint8_t[]>(width * height * 3);
+  const auto image_data = std::make_unique<std::uint8_t[]>(numPixels * 3);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
+      logProgress(x, y);
+
       const auto r = static_cast<float>(x) / (width - 1);
       const auto g = static_cast<float>(y) / (height - 1);
       const auto b = 0.25;
@@ -32,6 +39,8 @@ int main(int argc, char **argv) {
       image_data[y * width * 3 + x * 3 + 2] = ib;
     }
   }
+
+  LOG(INFO) << "Writing image";
   stbi_write_png("render.png", width, height, 3, image_data.get(), 0);
 
   return EXIT_SUCCESS;

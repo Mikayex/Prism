@@ -41,6 +41,62 @@ public:
     return y;
   }
 
+  Vector2<T, IsPoint> operator-() const {
+    return Vector2<T, IsPoint>(-x, -y);
+  }
+
+  Vector2<T, IsPoint> operator+(const Vector2<T, IsPoint> &v) {
+    DCHECK(!v.hasNaN());
+    return Vector2<T, IsPoint>(x + v.x, y + v.y);
+  }
+
+  Vector2<T, IsPoint> &operator+=(const Vector2<T, IsPoint> &v) {
+    DCHECK(!v.hasNaN());
+    x += v.x;
+    y += v.y;
+    return *this;
+  }
+
+  Vector2<T, IsPoint> operator-(const Vector2<T, IsPoint> &v) {
+    DCHECK(!v.hasNaN());
+    return Vector2<T, IsPoint>(x - v.x, y - v.y);
+  }
+
+  Vector2<T, IsPoint> &operator-=(const Vector2<T, IsPoint> &v) {
+    DCHECK(!v.hasNaN());
+    x -= v.x;
+    y -= v.y;
+    return *this;
+  }
+
+  template<typename U>
+  Vector2<T, IsPoint> operator*(U s) const {
+    return Vector2<T, IsPoint>(s * x, s * y);
+  }
+
+  template<typename U>
+  Vector2<T, IsPoint> &operator*=(U s) {
+    DCHECK(!isNaN(s));
+    x *= s;
+    y *= s;
+    return *this;
+  }
+  template<typename U>
+  Vector2<T, IsPoint> operator/(U f) const {
+    CHECK_NE(f, 0);
+    const Float inv = static_cast<Float>(1) / f;
+    return Vector2<T, IsPoint>(x * inv, y * inv);
+  }
+
+  template<typename U>
+  Vector2<T> &operator/=(U f) {
+    CHECK_NE(f, 0);
+    const Float inv = static_cast<Float>(1) / f;
+    x *= inv;
+    y *= inv;
+    return *this;
+  }
+
   [[nodiscard]] bool hasNaN() const {
     if constexpr (std::numeric_limits<T>::has_quiet_NaN) {
       return std::isnan(x) || std::isnan(y);
@@ -57,6 +113,38 @@ extern template class Vector2<int, true>;
 
 template<typename T>
 using Point2 = Vector2<T, true>;
+
+template<typename T>
+inline Point2<T> operator+(const Point2<T> &p, const Vector2<T> &v) {
+  DCHECK(!p.hasNaN());
+  DCHECK(!v.hasNaN());
+  return Point2<T>(p.x + v.x, p.y + v.y);
+}
+
+template<typename T>
+inline Point2<T> &operator+=(Point2<T> &p, const Vector2<T> &v) {
+  DCHECK(!p.hasNaN());
+  DCHECK(!v.hasNaN());
+  p.x += v.x;
+  p.y += v.y;
+  return p;
+}
+
+template<typename T>
+inline Point2<T> operator-(const Point2<T> &p, const Vector2<T> &v) {
+  DCHECK(!p.hasNaN());
+  DCHECK(!v.hasNaN());
+  return Point2<T>(p.x - v.x, p.y - v.y);
+}
+
+template<typename T>
+inline Point2<T> &operator-=(Point2<T> &p, const Vector2<T> &v) {
+  DCHECK(!p.hasNaN());
+  DCHECK(!v.hasNaN());
+  p.x -= v.x;
+  p.y -= v.y;
+  return p;
+}
 
 using Point2f = Vector2<Float, true>;
 using Point2i = Vector2<int, true>;

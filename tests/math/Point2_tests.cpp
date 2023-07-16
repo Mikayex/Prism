@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <math/Point2.hpp>
+#include <math/Vector2.hpp>
 
 using namespace Prism;
 

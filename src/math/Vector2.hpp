@@ -6,7 +6,7 @@
 #include <limits>
 
 namespace Prism {
-template<typename T>
+template<typename T, bool IsPoint = false>
 class Vector2 {
 public:
   T x{}, y{};
@@ -16,11 +16,11 @@ public:
     DCHECK(!hasNaN());
   }
 
-  Vector2(const Vector2<T> &v) : x(v.x), y(v.y) {
+  Vector2(const Vector2<T, IsPoint> &v) : x(v.x), y(v.y) {
     DCHECK(!v.hasNaN());
   }
 
-  Vector2<T> &operator=(const Vector2<T> &v) {
+  Vector2<T, IsPoint> &operator=(const Vector2<T, IsPoint> &v) {
     DCHECK(!v.hasNaN());
     x = v.x;
     y = v.y;
@@ -48,12 +48,19 @@ public:
   }
 };
 
-extern template class Vector2<float>;
-extern template class Vector2<int>;
+extern template class Vector2<float, false>;
+extern template class Vector2<float, true>;
+extern template class Vector2<int, false>;
+extern template class Vector2<int, true>;
 
-using Vector2f = Vector2<float>;
-using Vector2i = Vector2<int>;
+template<typename T>
+using Point2 = Vector2<T, true>;
 
+using Point2f = Vector2<float, true>;
+using Point2i = Vector2<int, true>;
+
+using Vector2f = Vector2<float, false>;
+using Vector2i = Vector2<int, false>;
 }  // namespace Prism
 
 #endif  // PRISM_VECTOR2_HPP

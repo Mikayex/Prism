@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <math/Point3.hpp>
+#include <math/Vector3.hpp>
 
 using namespace Prism;
 
@@ -18,7 +18,7 @@ TYPED_TEST(Point3Test, Constructors) {
   EXPECT_EQ(defaultPoint.x, T{});
   EXPECT_EQ(defaultPoint.y, T{});
 
-  const P p(-1, 2);
+  const P p(-1, 2, 3);
   EXPECT_EQ(p.x, -1);
   EXPECT_EQ(p.y, 2);
 
@@ -34,7 +34,7 @@ TYPED_TEST(Point3Test, hasNaN) {
   const P defaultPoint;
   EXPECT_FALSE(defaultPoint.hasNaN());
 
-  const P p(-1, 2);
+  const P p(-1, 2, 3);
   EXPECT_FALSE(p.hasNaN());
 
   P p2 = p;

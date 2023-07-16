@@ -9,6 +9,9 @@ if (WIN32)
 endif ()
 add_subdirectory(glog)
 
+# STB Image Write
+add_subdirectory(stb_image_write)
+
 # Google Test
 if (PRISM_TESTS)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

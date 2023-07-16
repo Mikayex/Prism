@@ -12,7 +12,15 @@ set(PRISM_MATH
         math/Functions.hpp)
 source_group(Math FILES ${PRISM_MATH})
 
-add_library(prism STATIC ${PRISM_FILES} ${PRISM_MATH})
+set(PRISM_SHAPES
+        shapes/Shape.cpp
+        shapes/Shape.hpp
+        shapes/Sphere.cpp
+        shapes/Sphere.hpp
+        )
+source_group(Shapes FILES ${PRISM_SHAPES})
+
+add_library(prism STATIC ${PRISM_FILES} ${PRISM_MATH} ${PRISM_SHAPES})
 target_include_directories(prism PUBLIC .)
 target_link_libraries(prism PUBLIC glog::glog)
 

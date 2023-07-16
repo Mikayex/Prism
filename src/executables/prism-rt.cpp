@@ -7,6 +7,7 @@
 #include <math/Functions.hpp>
 #include <math/Vector3.hpp>
 #include <memory>
+#include <shapes/Sphere.hpp>
 
 using namespace Prism;
 
@@ -20,7 +21,11 @@ void logProgress(int x, int y) {
   LOG_EVERY_T(INFO, 0.25) << ((100.0 * y * width + x) / numPixels) << '%';
 }
 
-Vector3f rayColor(const Ray &ray) {
+Vector3f rayColor(const Ray &ray, const Shape &shape) {
+  if (const auto intersection = shape.intersect(ray); intersection.has_value() && *intersection > 0) {
+    return {1, 0, 0};
+  }
+
   const auto normalizedDirection = normalize(ray.d);
   const auto t = Float(0.5) * (normalizedDirection.y + Float(1));
   return mix(Vector3f(1.0, 1.0, 1.0), Vector3f(0.5, 0.7, 1.0), t);
@@ -45,6 +50,8 @@ int main(int argc, char **argv) {
   auto vertical = Vector3f(0, viewportHeight, 0);
   auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vector3f(0, 0, focalLength);
 
+  const auto sphere = Sphere(Point3f(0, 0, 1), 0.5);
+
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
       logProgress(x, y);
@@ -55,7 +62,7 @@ int main(int argc, char **argv) {
       Vector3f direction = Vector3f(origin, lower_left_corner + horizontal * u + vertical * v);
       Ray ray(origin, direction);
 
-      const auto color = rayColor(ray);
+      const auto color = rayColor(ray, sphere);
       const auto color8 = color * 255.999;
 
       image_data[y * width * 3 + x * 3 + 0] = static_cast<std::uint8_t>(color8.x);

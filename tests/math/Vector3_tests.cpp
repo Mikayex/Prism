@@ -7,7 +7,7 @@ using namespace Prism;
 template<typename T>
 class Vector3Test : public testing::Test {};
 
-using VectorTypes = ::testing::Types<float, int>;
+using VectorTypes = ::testing::Types<Float, int>;
 TYPED_TEST_SUITE(Vector3Test, VectorTypes);
 
 TYPED_TEST(Vector3Test, Constructors) {

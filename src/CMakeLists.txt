@@ -1,4 +1,5 @@
 set(PRISM_MATH
+        math/Float.hpp
         math/Vector2.cpp
         math/Vector2.hpp
         math/Vector3.cpp

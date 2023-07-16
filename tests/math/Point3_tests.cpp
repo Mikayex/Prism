@@ -7,7 +7,7 @@ using namespace Prism;
 template<typename T>
 class Point3Test : public testing::Test {};
 
-using PointTypes = ::testing::Types<float, int>;
+using PointTypes = ::testing::Types<Float, int>;
 TYPED_TEST_SUITE(Point3Test, PointTypes);
 
 TYPED_TEST(Point3Test, Constructors) {

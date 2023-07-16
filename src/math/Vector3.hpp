@@ -5,6 +5,8 @@
 #include <cmath>
 #include <limits>
 
+#include "Float.hpp"
+
 namespace Prism {
 template<typename T, bool IsPoint = false>
 class Vector3 {
@@ -51,18 +53,18 @@ public:
   }
 };
 
-extern template class Vector3<float, false>;
-extern template class Vector3<float, true>;
+extern template class Vector3<Float, false>;
+extern template class Vector3<Float, true>;
 extern template class Vector3<int, false>;
 extern template class Vector3<int, true>;
 
 template<typename T>
 using Point3 = Vector3<T, true>;
 
-using Point3f = Point3<float>;
+using Point3f = Point3<Float>;
 using Point3i = Point3<int>;
 
-using Vector3f = Vector3<float, false>;
+using Vector3f = Vector3<Float, false>;
 using Vector3i = Vector3<int, false>;
 
 }  // namespace Prism

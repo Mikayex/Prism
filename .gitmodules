@@ -7,3 +7,6 @@
 [submodule "third-parties/glog"]
 	path = third-parties/glog
 	url = https://github.com/google/glog.git
+[submodule "third-parties/glfw"]
+	path = third-parties/glfw
+	url = https://github.com/glfw/glfw.git

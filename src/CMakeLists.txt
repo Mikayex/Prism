@@ -1,5 +1,11 @@
 add_subdirectory(math)
 add_subdirectory(raytracing)
 
-add_executable(prism-rt prism-rt.cpp)
-target_link_libraries(prism-rt raytracing glog::glog stb_image_write)
+set(APP_FILES
+        Application.cpp
+        Application.hpp
+        main.cpp
+        )
+
+add_executable(prism ${APP_FILES})
+target_link_libraries(prism glfw glog::glog)

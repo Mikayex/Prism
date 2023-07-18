@@ -1,13 +1,13 @@
-#include <glog/logging.h>
-#include <stb_image_write.h>
-
-#include <Ray.hpp>
 #include <cstdlib>
 #include <iostream>
-#include <math/Functions.hpp>
-#include <math/Vector3.hpp>
 #include <memory>
 #include <shapes/Sphere.hpp>
+
+#include "glog/logging.h"
+#include "math/Functions.hpp"
+#include "math/Vector3.hpp"
+#include "raytracing/Ray.hpp"
+#include "stb_image_write.h"
 
 using namespace Prism;
 

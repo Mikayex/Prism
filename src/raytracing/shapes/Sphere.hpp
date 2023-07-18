@@ -1,8 +1,7 @@
 #ifndef PRISM_SPHERE_HPP
 #define PRISM_SPHERE_HPP
-#include <math/Vector3.hpp>
-
 #include "Shape.hpp"
+#include "math/Vector3.hpp"
 
 namespace Prism {
 

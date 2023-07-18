@@ -1,6 +1,6 @@
 #include "Sphere.hpp"
 
-#include <Ray.hpp>
+#include "raytracing/Ray.hpp"
 
 namespace Prism {
 Sphere::Sphere(const Point3f& center, Float radius) : center(center), radius(radius) {}

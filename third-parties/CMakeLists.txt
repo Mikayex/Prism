@@ -32,3 +32,6 @@ if (PRISM_TESTS)
             gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
     )
 endif ()
+
+# Vulkan Headers
+add_subdirectory(vulkan-headers)

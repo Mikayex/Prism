@@ -8,4 +8,5 @@ set(APP_FILES
         )
 
 add_executable(prism ${APP_FILES})
-target_link_libraries(prism glfw glog::glog)
+target_compile_definitions(prism PUBLIC GLFW_INCLUDE_VULKAN)
+target_link_libraries(prism glfw glog::glog Vulkan::Headers)

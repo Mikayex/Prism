@@ -19,6 +19,9 @@ private:
   void initVulkan();
 
   GLFWwindow* m_window = nullptr;
+
+  vk::UniqueInstance m_vkInstance{};
+  vk::PhysicalDevice m_vkPhysicalDevice{};
 };
 
 }  // namespace Prism

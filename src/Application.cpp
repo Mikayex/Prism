@@ -2,10 +2,79 @@
 
 #include <glog/logging.h>
 
+#include <algorithm>
+#include <optional>
+#include <unordered_set>
+#include <vector>
+
+#include "VulkanUtils.hpp"
+
+VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+
 namespace Prism {
 namespace {
 void glfwErrorCallback(int error, const char* description) {
   LOG(ERROR) << "Glfw Error " << error << ": " << description;
+}
+
+std::vector<const char*> toCharArrays(const std::unordered_set<std::string>& strings) {
+  std::vector<const char*> charArrays;
+  charArrays.reserve(strings.size());
+  for (const auto& s : strings) {
+    charArrays.push_back(s.c_str());
+  }
+
+  return charArrays;
+}
+
+vk::UniqueInstance createVulkanInstance(const std::vector<std::string>& extensions = {},
+                                        const std::vector<std::string>& layers = {}) {
+  const std::unordered_set<std::string> uniqueExtensions{extensions.cbegin(), extensions.cend()};
+  const auto extensionsList = toCharArrays(uniqueExtensions);
+
+  const std::unordered_set<std::string> uniqueLayers{layers.cbegin(), layers.cend()};
+  const auto layersList = toCharArrays(uniqueLayers);
+
+  const vk::InstanceCreateInfo createInfo{
+      {},              // flags
+      nullptr,         // applicationInfo
+      layersList,      // layers
+      extensionsList,  // extensions
+  };
+
+  auto instance = vk::createInstanceUnique(createInfo);
+  VULKAN_HPP_DEFAULT_DISPATCHER.init(*instance);
+
+  return std::move(instance);
+}
+
+vk::PhysicalDevice selectVulkanDevice(vk::Instance instance) {
+  const auto physicalDevices = instance.enumeratePhysicalDevices();
+  CHECK(!physicalDevices.empty());
+
+  std::optional<vk::PhysicalDevice> bestGpu;
+
+  for (const auto& gpu : physicalDevices) {
+    const auto gpuProperties = gpu.getProperties();
+    const auto queueFamilyProperties = gpu.getQueueFamilyProperties();
+
+    // Check prerequisite
+    for (std::size_t i = 0; i < queueFamilyProperties.size(); ++i) {
+      if (!glfwGetPhysicalDevicePresentationSupport(instance, gpu, i)) {
+        continue;
+      }
+    }
+
+    // TODO: Support the case where multiple discrete GPUs are found
+    if (gpuProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu) {
+      return gpu;
+    }
+
+    bestGpu = gpu;
+  }
+
+  CHECK(bestGpu.has_value());
+  return *bestGpu;
 }
 }  // namespace
 
@@ -22,7 +91,9 @@ Application::Application(int width, int height, const std::string& title) {
 }
 
 Application::~Application() {
+  // Controlled destruction sequence...
   glfwDestroyWindow(m_window);
+  m_vkInstance.reset();
   glfwTerminate();
 }
 
@@ -36,6 +107,19 @@ void Application::initVulkan() {
   if (!glfwVulkanSupported()) {
     LOG(FATAL) << "Vulkan not supported!";
   }
+
+  const auto vkGetInstanceProcAddr = PFN_vkGetInstanceProcAddr(
+      glfwGetInstanceProcAddress(nullptr, "vkGetInstanceProcAddr"));
+  VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+
+  std::uint32_t glfwExtensionsCount = 0;
+  const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionsCount);
+  const std::vector<std::string> instanceExtensions(glfwExtensions, glfwExtensions + glfwExtensionsCount);
+
+  m_vkInstance = createVulkanInstance(instanceExtensions);
+  DCHECK_NOTNULL(m_vkInstance);
+
+  m_vkPhysicalDevice = selectVulkanDevice(*m_vkInstance);
 }
 
 }  // namespace Prism

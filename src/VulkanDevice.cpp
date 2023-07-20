@@ -62,8 +62,8 @@ VulkanDevice::VulkanDevice(const vk::Instance& instance, vk::PhysicalDevice phys
       extensionsList,    // extensions
   };
 
-  m_vkDevice = m_vkPhysicalDevice.createDeviceUnique(deviceCreateInfo);
-  CHECK_NOTNULL(m_vkDevice);
+  m_vkDevice = CHECK_NOTNULL(m_vkPhysicalDevice.createDeviceUnique(deviceCreateInfo));
+  VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_vkDevice);
 
   m_graphicsQueue = m_vkDevice->getQueue(queueFamilies.graphicsQueueFamilyIndex, 0);
   if (queueFamilies.graphicsQueueFamilyIndex == queueFamilies.presentQueueFamilyIndex)

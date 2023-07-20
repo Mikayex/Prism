@@ -122,8 +122,7 @@ void Application::initVulkan() {
   const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionsCount);
   const std::vector<std::string> instanceExtensions(glfwExtensions, glfwExtensions + glfwExtensionsCount);
 
-  m_vkInstance = createVulkanInstance(instanceExtensions);
-  DCHECK_NOTNULL(m_vkInstance);
+  m_vkInstance = CHECK_NOTNULL(createVulkanInstance(instanceExtensions));
 
   const auto physicalDevice = selectVulkanDevice(*m_vkInstance);
   m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice);

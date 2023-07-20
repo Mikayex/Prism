@@ -59,11 +59,21 @@ vk::PhysicalDevice selectVulkanDevice(vk::Instance instance) {
     const auto queueFamilyProperties = gpu.getQueueFamilyProperties();
 
     // Check prerequisite
+    bool supportsGraphics = false;
+    bool supportsPresent = false;
     for (std::size_t i = 0; i < queueFamilyProperties.size(); ++i) {
-      if (!glfwGetPhysicalDevicePresentationSupport(instance, gpu, i)) {
-        continue;
-      }
+      if (!supportsPresent && glfwGetPhysicalDevicePresentationSupport(instance, gpu, i))
+        supportsPresent = true;
+
+      if (!supportsGraphics && queueFamilyProperties[i].queueFlags & vk::QueueFlagBits::eGraphics)
+        supportsGraphics = true;
+
+      if (supportsPresent && supportsGraphics)
+        break;
     }
+
+    if (!supportsPresent || !supportsGraphics)
+      continue;
 
     // TODO: Support the case where multiple discrete GPUs are found
     if (gpuProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu) {

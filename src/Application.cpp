@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "VulkanDevice.hpp"
 #include "VulkanUtils.hpp"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
@@ -15,16 +16,6 @@ namespace Prism {
 namespace {
 void glfwErrorCallback(int error, const char* description) {
   LOG(ERROR) << "Glfw Error " << error << ": " << description;
-}
-
-std::vector<const char*> toCharArrays(const std::unordered_set<std::string>& strings) {
-  std::vector<const char*> charArrays;
-  charArrays.reserve(strings.size());
-  for (const auto& s : strings) {
-    charArrays.push_back(s.c_str());
-  }
-
-  return charArrays;
 }
 
 vk::UniqueInstance createVulkanInstance(const std::vector<std::string>& extensions = {},
@@ -102,7 +93,12 @@ Application::Application(int width, int height, const std::string& title) {
 
 Application::~Application() {
   // Controlled destruction sequence...
+
+  if (m_device)
+    m_device->device().waitIdle();
+
   glfwDestroyWindow(m_window);
+  m_device.reset();
   m_vkInstance.reset();
   glfwTerminate();
 }
@@ -129,7 +125,8 @@ void Application::initVulkan() {
   m_vkInstance = createVulkanInstance(instanceExtensions);
   DCHECK_NOTNULL(m_vkInstance);
 
-  m_vkPhysicalDevice = selectVulkanDevice(*m_vkInstance);
+  const auto physicalDevice = selectVulkanDevice(*m_vkInstance);
+  m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice);
 }
 
 }  // namespace Prism

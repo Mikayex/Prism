@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.hpp>
 
 namespace Prism {
+class VulkanDevice;
 
 class Application {
 public:
@@ -21,7 +22,7 @@ private:
   GLFWwindow* m_window = nullptr;
 
   vk::UniqueInstance m_vkInstance{};
-  vk::PhysicalDevice m_vkPhysicalDevice{};
+  std::unique_ptr<VulkanDevice> m_device{};
 };
 
 }  // namespace Prism

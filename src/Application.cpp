@@ -125,6 +125,8 @@ void Application::initVulkan() {
   m_vkInstance = CHECK_NOTNULL(createVulkanInstance(instanceExtensions));
 
   const auto physicalDevice = selectVulkanDevice(*m_vkInstance);
+  LOG(INFO) << "Using Vulkan device: " << physicalDevice.getProperties().deviceName;
+
   m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice);
 }
 

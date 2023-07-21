@@ -97,6 +97,7 @@ Application::~Application() {
   if (m_device)
     m_device->device().waitIdle();
 
+  m_vkSurface.reset();
   glfwDestroyWindow(m_window);
   m_device.reset();
   m_vkInstance.reset();
@@ -128,6 +129,11 @@ void Application::initVulkan() {
   LOG(INFO) << "Using Vulkan device: " << physicalDevice.getProperties().deviceName;
 
   m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice);
+
+  VkSurfaceKHR surface;
+  const auto result = glfwCreateWindowSurface(*m_vkInstance, m_window, nullptr, &surface);
+  CHECK_EQ(vk::Result{result}, vk::Result::eSuccess);
+  m_vkSurface = vk::UniqueSurfaceKHR(surface, *m_vkInstance);
 }
 
 }  // namespace Prism

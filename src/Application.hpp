@@ -24,6 +24,7 @@ private:
 
   vk::UniqueInstance m_vkInstance{};
   std::unique_ptr<VulkanDevice> m_device{};
+  vk::UniqueSurfaceKHR m_vkSurface{};
 };
 
 }  // namespace Prism

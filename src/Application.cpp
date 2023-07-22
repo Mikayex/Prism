@@ -77,6 +77,13 @@ vk::PhysicalDevice selectVulkanDevice(vk::Instance instance) {
   CHECK(bestGpu.has_value());
   return *bestGpu;
 }
+
+vk::UniqueSurfaceKHR createSurface(vk::Instance instance, GLFWwindow* window) {
+  VkSurfaceKHR surface;
+  const auto result = glfwCreateWindowSurface(instance, DCHECK_NOTNULL(window), nullptr, &surface);
+  CHECK_EQ(vk::Result{result}, vk::Result::eSuccess);
+  return vk::UniqueSurfaceKHR(surface, instance);
+}
 }  // namespace
 
 Application::Application(int width, int height, const std::string& title) {
@@ -130,10 +137,7 @@ void Application::initVulkan() {
 
   m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice);
 
-  VkSurfaceKHR surface;
-  const auto result = glfwCreateWindowSurface(*m_vkInstance, m_window, nullptr, &surface);
-  CHECK_EQ(vk::Result{result}, vk::Result::eSuccess);
-  m_vkSurface = vk::UniqueSurfaceKHR(surface, *m_vkInstance);
+  m_vkSurface = createSurface(*m_vkInstance, m_window);
 }
 
 }  // namespace Prism

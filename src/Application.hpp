@@ -1,11 +1,11 @@
 #ifndef PRISM_APPLICATION_HPP
 #define PRISM_APPLICATION_HPP
 
-#include <GLFW/glfw3.h>
-
 #include <memory>
 #include <string>
 #include <vulkan/vulkan.hpp>
+
+struct GLFWwindow;
 
 namespace Prism {
 class VulkanDevice;

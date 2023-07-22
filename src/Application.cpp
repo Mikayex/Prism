@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include <GLFW/glfw3.h>
 #include <glog/logging.h>
 
 #include <algorithm>

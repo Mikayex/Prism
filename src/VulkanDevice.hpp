@@ -21,11 +21,19 @@ public:
     return *m_vkDevice;
   }
 
-  [[nodiscard]] vk::Queue graphicsQueue() {
+  [[nodiscard]] std::uint32_t graphicsQueueFamily() const {
+    return m_graphicsQueueFamily;
+  }
+
+  [[nodiscard]] vk::Queue graphicsQueue() const {
     return m_graphicsQueue;
   }
 
-  [[nodiscard]] vk::Queue presentQueue() {
+  [[nodiscard]] std::uint32_t presentQueueFamily() const {
+    return m_presentQueueFamily;
+  }
+
+  [[nodiscard]] vk::Queue presentQueue() const {
     return m_presentQueue;
   }
 
@@ -33,7 +41,9 @@ private:
   vk::PhysicalDevice m_vkPhysicalDevice{};
   vk::UniqueDevice m_vkDevice{};
 
+  std::uint32_t m_graphicsQueueFamily;
   vk::Queue m_graphicsQueue;
+  std::uint32_t m_presentQueueFamily;
   vk::Queue m_presentQueue;
 };
 

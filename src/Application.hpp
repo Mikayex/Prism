@@ -9,6 +9,7 @@ struct GLFWwindow;
 
 namespace Prism {
 class VulkanDevice;
+class VulkanSwapchain;
 
 class Application {
 public:
@@ -19,12 +20,14 @@ public:
 
 private:
   void initVulkan();
+vk::Extent2D surfaceExtent() const;
 
   GLFWwindow* m_window = nullptr;
 
   vk::UniqueInstance m_vkInstance{};
   std::unique_ptr<VulkanDevice> m_device{};
   vk::UniqueSurfaceKHR m_vkSurface{};
+  std::unique_ptr<VulkanSwapchain> m_swapchain{};
 };
 
 }  // namespace Prism

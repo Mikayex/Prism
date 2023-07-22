@@ -6,6 +6,8 @@ set(APP_FILES
         Application.hpp
         VulkanDevice.cpp
         VulkanDevice.hpp
+        VulkanSwapchain.cpp
+        VulkanSwapchain.hpp
         VulkanUtils.cpp
         VulkanUtils.hpp
         main.cpp

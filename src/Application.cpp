@@ -5,10 +5,12 @@
 
 #include <algorithm>
 #include <optional>
+#include <set>
 #include <unordered_set>
 #include <vector>
 
 #include "VulkanDevice.hpp"
+#include "VulkanSwapchain.hpp"
 #include "VulkanUtils.hpp"
 
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
@@ -40,9 +42,11 @@ vk::UniqueInstance createVulkanInstance(const std::vector<std::string>& extensio
   return std::move(instance);
 }
 
-vk::PhysicalDevice selectVulkanDevice(vk::Instance instance) {
+vk::PhysicalDevice selectVulkanDevice(vk::Instance instance, const std::vector<std::string>& deviceExtensions = {}) {
   const auto physicalDevices = instance.enumeratePhysicalDevices();
   CHECK(!physicalDevices.empty());
+
+  std::set<std::string> requiredExtensions(deviceExtensions.cbegin(), deviceExtensions.cend());
 
   std::optional<vk::PhysicalDevice> bestGpu;
 
@@ -65,6 +69,16 @@ vk::PhysicalDevice selectVulkanDevice(vk::Instance instance) {
     }
 
     if (!supportsPresent || !supportsGraphics)
+      continue;
+
+    // Check extensions
+    const auto deviceExtensionsList = gpu.enumerateDeviceExtensionProperties();
+    std::set<std::string> supportedExtensions;
+    for (const auto& extension : deviceExtensionsList)
+      supportedExtensions.insert(extension.extensionName);
+
+    if (!std::includes(supportedExtensions.cbegin(), supportedExtensions.cend(), requiredExtensions.cbegin(),
+                       requiredExtensions.cend()))
       continue;
 
     // TODO: Support the case where multiple discrete GPUs are found
@@ -105,6 +119,7 @@ Application::~Application() {
   if (m_device)
     m_device->device().waitIdle();
 
+  m_swapchain.reset();
   m_vkSurface.reset();
   glfwDestroyWindow(m_window);
   m_device.reset();
@@ -133,12 +148,19 @@ void Application::initVulkan() {
 
   m_vkInstance = CHECK_NOTNULL(createVulkanInstance(instanceExtensions));
 
-  const auto physicalDevice = selectVulkanDevice(*m_vkInstance);
+  const std::vector<std::string> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  const auto physicalDevice = selectVulkanDevice(*m_vkInstance, deviceExtensions);
   LOG(INFO) << "Using Vulkan device: " << physicalDevice.getProperties().deviceName;
 
-  m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice);
+  m_device = std::make_unique<VulkanDevice>(*m_vkInstance, physicalDevice, deviceExtensions);
 
   m_vkSurface = createSurface(*m_vkInstance, m_window);
+
+  int width, height;
+  glfwGetFramebufferSize(m_window, &width, &height);
+  const vk::Extent2D desiredExtent{static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height)};
+  m_swapchain = std::make_unique<VulkanSwapchain>(*m_device, *m_vkSurface, desiredExtent);
 }
 
 }  // namespace Prism

@@ -73,5 +73,16 @@ VulkanDevice::VulkanDevice(const vk::Instance& instance, vk::PhysicalDevice phys
 
   CHECK_NOTNULL(m_graphicsQueue);
   CHECK_NOTNULL(m_presentQueue);
+
+  const vk::CommandPoolCreateInfo commandPoolCreateInfo{
+      vk::CommandPoolCreateFlagBits::eResetCommandBuffer,  // flags
+      queueFamilies.graphicsQueueFamilyIndex,
+  };
+  m_vkCommandPool = m_vkDevice->createCommandPoolUnique(commandPoolCreateInfo);
+}
+
+VulkanDevice::~VulkanDevice() {
+  m_vkCommandPool.reset();
+  m_vkDevice.reset();
 }
 }  // namespace Prism

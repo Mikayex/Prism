@@ -9,6 +9,8 @@ public:
   explicit VulkanDevice(const vk::Instance& instance, vk::PhysicalDevice physicalDevice,
                         const std::vector<std::string>& extensions = {}, const std::vector<std::string>& layers = {});
 
+  ~VulkanDevice();
+
   [[nodiscard]] vk::PhysicalDevice physicalDevice() const {
     return m_vkPhysicalDevice;
   }
@@ -37,9 +39,18 @@ public:
     return m_presentQueue;
   }
 
+  [[nodiscard]] const vk::CommandPool& commandPool() const {
+    return *m_vkCommandPool;
+  }
+
+  [[nodiscard]] vk::CommandPool& commandPool() {
+    return *m_vkCommandPool;
+  }
+
 private:
   vk::PhysicalDevice m_vkPhysicalDevice{};
   vk::UniqueDevice m_vkDevice{};
+  vk::UniqueCommandPool m_vkCommandPool{};
 
   std::uint32_t m_graphicsQueueFamily;
   vk::Queue m_graphicsQueue;

@@ -122,6 +122,7 @@ Application::~Application() {
   m_swapchain.reset();
   m_vkSurface.reset();
   glfwDestroyWindow(m_window);
+  m_frameData = {};
   m_device.reset();
   m_vkInstance.reset();
   glfwTerminate();
@@ -129,7 +130,18 @@ Application::~Application() {
 
 void Application::run() {
   while (!glfwWindowShouldClose(m_window)) {
-    glfwPollEvents();
+    try {
+      // Do image acquisition first, so we can do other things on CPU while waiting for image
+      const auto imageIndex = acquireImage();
+
+      glfwPollEvents();
+
+      renderFrame(imageIndex);
+      presentFrame(imageIndex);
+    } catch (vk::OutOfDateKHRError&) {
+      // TODO: Recreate swapchain
+    }
+    m_frameData.next();
   }
 }
 
@@ -161,6 +173,85 @@ void Application::initVulkan() {
   glfwGetFramebufferSize(m_window, &width, &height);
   const vk::Extent2D desiredExtent{static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height)};
   m_swapchain = std::make_unique<VulkanSwapchain>(*m_device, *m_vkSurface, desiredExtent);
+
+  const auto numFrames = static_cast<std::uint32_t>(m_swapchain->images().size());
+  auto commandBuffers = m_device->device().allocateCommandBuffersUnique({
+      m_device->commandPool(),
+      vk::CommandBufferLevel::ePrimary,
+      numFrames,
+  });
+  m_frameData = Utils::Swappable<FrameData>(numFrames, [this, &commandBuffers](std::size_t index) {
+    constexpr vk::SemaphoreCreateInfo semaphoreCreateInfo{};
+    constexpr vk::FenceCreateInfo fenceCreateInfo{
+        vk::FenceCreateFlagBits::eSignaled,
+    };
+
+    return FrameData{
+        m_device->device().createSemaphoreUnique(semaphoreCreateInfo),  // imageAcquiredSemaphore
+        m_device->device().createSemaphoreUnique(semaphoreCreateInfo),  // renderFinishedSemaphore
+        m_device->device().createFenceUnique(fenceCreateInfo),          // commandBufferFence
+        std::move(commandBuffers[index]),                               // commandBuffer
+    };
+  });
+}
+
+std::uint32_t Application::acquireImage() {
+  const auto result = m_device->device().acquireNextImageKHR(m_swapchain->swapchain(), UINT64_MAX,
+                                                             *m_frameData.current().imageAcquiredSemaphore);
+  return result.value;
+}
+
+void Application::renderFrame(std::uint32_t imageIndex) {
+  auto& commandBufferFence = *m_frameData.current().commandBufferFence;
+  const auto result = m_device->device().waitForFences(commandBufferFence, VK_TRUE, UINT64_MAX);
+  vk::resultCheck(result, "vk::Device::waitForFences");
+  m_device->device().resetFences(commandBufferFence);
+
+  auto& commandBuffer = *m_frameData.current().commandBuffer;
+  commandBuffer.reset();
+  commandBuffer.begin(vk::CommandBufferBeginInfo{});
+  // TODO
+
+  // Transition swapchain image layout
+  // Should be removed to use an implcit transition in render pass
+  const vk::ImageMemoryBarrier barrier{vk::AccessFlagBits::eNone,                 // srcAccess
+                                       vk::AccessFlagBits::eColorAttachmentRead,  // dstAccess
+                                       vk::ImageLayout::eUndefined,               // oldLayout
+                                       vk::ImageLayout::ePresentSrcKHR,           // newLayout
+                                       VK_QUEUE_FAMILY_IGNORED,
+                                       VK_QUEUE_FAMILY_IGNORED,
+                                       m_swapchain->images()[imageIndex],
+                                       vk::ImageSubresourceRange{vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}};
+  commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe,
+                                vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::DependencyFlagBits::eByRegion,
+                                {}, {}, barrier);
+  commandBuffer.end();
+
+  std::array<vk::PipelineStageFlags, 1> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
+  const vk::SubmitInfo submitInfo{
+      *m_frameData.current().imageAcquiredSemaphore,  // waitSemaphores
+      waitStages,                                     // waitDstStageMask
+      commandBuffer,
+  };
+  m_device->graphicsQueue().submit(submitInfo, *m_frameData.current().commandBufferFence);
+}
+
+void Application::presentFrame(std::uint32_t imageIndex) {
+  vk::PresentInfoKHR presentInfo{
+      nullptr,                   // waitSemaphores
+      m_swapchain->swapchain(),  // swapchains
+      imageIndex,                // imageIndices
+  };
+  const auto result = m_device->presentQueue().presentKHR(presentInfo);
+
+  switch (result) {
+    case vk::Result::eSuccess:
+      break;
+    case vk::Result::eSuboptimalKHR:
+      break;  // TODO Ignore for now...
+    default:
+      vk::throwResultException(result, "vk::Queue::presentKHR");
+  }
 }
 
 }  // namespace Prism

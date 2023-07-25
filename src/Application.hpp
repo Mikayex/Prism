@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <utils/Swappable.hpp>
 #include <vulkan/vulkan.hpp>
 
 struct GLFWwindow;
@@ -20,7 +21,16 @@ public:
 
 private:
   void initVulkan();
-vk::Extent2D surfaceExtent() const;
+  std::uint32_t acquireImage();
+  void renderFrame(std::uint32_t imageIndex);
+  void presentFrame(std::uint32_t imageIndex);
+
+  struct FrameData {
+    vk::UniqueSemaphore imageAcquiredSemaphore;
+    vk::UniqueSemaphore renderFinishedSemaphore;
+    vk::UniqueFence commandBufferFence;
+    vk::UniqueCommandBuffer commandBuffer;
+  };
 
   GLFWwindow* m_window = nullptr;
 
@@ -28,6 +38,8 @@ vk::Extent2D surfaceExtent() const;
   std::unique_ptr<VulkanDevice> m_device{};
   vk::UniqueSurfaceKHR m_vkSurface{};
   std::unique_ptr<VulkanSwapchain> m_swapchain{};
+
+  Utils::Swappable<FrameData> m_frameData;
 };
 
 }  // namespace Prism

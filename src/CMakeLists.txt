@@ -1,5 +1,6 @@
 add_subdirectory(math)
 add_subdirectory(raytracing)
+add_subdirectory(utils)
 
 set(APP_FILES
         Application.cpp
@@ -20,4 +21,4 @@ target_compile_definitions(prism PUBLIC
         VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1
         )
 
-target_link_libraries(prism glfw glog::glog Vulkan::Headers)
+target_link_libraries(prism prism_utils glfw glog::glog Vulkan::Headers)

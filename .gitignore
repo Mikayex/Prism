@@ -1,52 +1,16 @@
-# Build directories
-/build
-/cmake-build-*
+/target
+/dist
 
-# Prerequisites
-*.d
+.vscode
+.idea
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+**/*.rs.bk
 
-# Precompiled Headers
-*.gch
-*.pch
+.fuse_hidden*
+.DS_Store
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# Added by cargo
+#
+# already existing elements were commented out
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# CMake
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-
-# IDE
-\.idea
+#/target

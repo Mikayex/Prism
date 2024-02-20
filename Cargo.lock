@@ -41,6 +41,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42cd52102d3df161c77a887b608d7a4897d7cc112886a9537b738a887a03aaff"
 dependencies = [
  "cfg-if",
+ "getrandom",
  "once_cell",
  "serde",
  "version_check",
@@ -167,6 +168,12 @@ name = "arrayvec"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
+
+[[package]]
+name = "as-raw-xcb-connection"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "175571dd1d178ced59193a6fc02dde1b972eb0bc56c892cde9beeceac5bf0f6b"
 
 [[package]]
 name = "ash"
@@ -616,6 +623,7 @@ dependencies = [
  "egui",
  "egui-wgpu",
  "egui-winit",
+ "egui_glow",
  "image",
  "js-sys",
  "log",
@@ -684,6 +692,22 @@ dependencies = [
  "smithay-clipboard",
  "web-time",
  "webbrowser",
+ "winit",
+]
+
+[[package]]
+name = "egui_glow"
+version = "0.26.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a08e3be8728b4c59493dbfec041c657e6725bdeafdbd49aef3f1dbb9e551fa01"
+dependencies = [
+ "bytemuck",
+ "egui",
+ "glow",
+ "log",
+ "memoffset",
+ "wasm-bindgen",
+ "web-sys",
  "winit",
 ]
 
@@ -1175,6 +1199,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe751422e4a8caa417e13c3ea66452215d7d63e19e604f4980461212f3ae1322"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "memoffset"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a634b1c61a95585bd15607c6ab0c4e5b226e695ff2800ba0cdccddf208c406c"
+dependencies = [
+ "autocfg",
 ]
 
 [[package]]
@@ -2079,6 +2112,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "wayland-protocols-plasma"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23803551115ff9ea9bce586860c5c5a971e360825a0309264102a9495a5ff479"
+dependencies = [
+ "bitflags 2.4.2",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols",
+ "wayland-scanner",
+]
+
+[[package]]
 name = "wayland-protocols-wlr"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2517,9 +2563,11 @@ version = "0.29.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4c824f11941eeae66ec71111cc2674373c772f482b58939bb4066b642aa2ffcf"
 dependencies = [
+ "ahash",
  "android-activity",
  "atomic-waker",
  "bitflags 2.4.2",
+ "bytemuck",
  "calloop",
  "cfg_aliases",
  "core-foundation",
@@ -2529,21 +2577,30 @@ dependencies = [
  "js-sys",
  "libc",
  "log",
+ "memmap2",
  "ndk",
  "ndk-sys",
  "objc2",
  "once_cell",
  "orbclient",
+ "percent-encoding",
  "raw-window-handle 0.6.0",
  "redox_syscall 0.3.5",
  "rustix",
+ "smithay-client-toolkit",
  "smol_str",
  "unicode-segmentation",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols",
+ "wayland-protocols-plasma",
  "web-sys",
  "web-time",
  "windows-sys 0.48.0",
+ "x11-dl",
+ "x11rb",
  "xkbcommon-dl",
 ]
 
@@ -2557,12 +2614,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "x11-dl"
+version = "2.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38735924fedd5314a6e548792904ed8c6de6636285cb9fec04d5b1db85c1516f"
+dependencies = [
+ "libc",
+ "once_cell",
+ "pkg-config",
+]
+
+[[package]]
 name = "x11rb"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8f25ead8c7e4cba123243a6367da5d3990e0d3affa708ea19dce96356bd9f1a"
 dependencies = [
+ "as-raw-xcb-connection",
  "gethostname",
+ "libc",
+ "libloading 0.8.1",
+ "once_cell",
  "rustix",
  "x11rb-protocol",
 ]

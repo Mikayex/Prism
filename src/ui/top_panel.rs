@@ -1,3 +1,5 @@
+use crate::ui::frame_time_widget::FrameTimeWidget;
+
 pub(super) fn draw(app: &mut crate::PrismApp, ctx: &egui::Context) {
     egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
         ui.set_enabled(!app.modal_window_open());
@@ -15,6 +17,10 @@ fn menu_bar(app: &mut crate::PrismApp, ctx: &egui::Context, ui: &mut egui::Ui) {
 
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             egui::warn_if_debug_build(ui);
+            ui.add(FrameTimeWidget::new(
+                &app.frame_times,
+                egui::Id::new("frame_time"),
+            ));
         });
     });
 }

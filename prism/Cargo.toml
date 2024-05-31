@@ -1,0 +1,10 @@
+[package]
+name = "prism"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+prism-core = { path = "../prism-core" }

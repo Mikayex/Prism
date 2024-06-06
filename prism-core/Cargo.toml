@@ -7,3 +7,5 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
+nalgebra = "0.32.5"
+num-traits = "0.2.19"

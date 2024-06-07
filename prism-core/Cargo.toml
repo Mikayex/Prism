@@ -7,5 +7,6 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
+half = { version = "2.4.1", features = ["num-traits"] }
 nalgebra = "0.32.5"
 num-traits = "0.2.19"

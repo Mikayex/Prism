@@ -1,6 +1,8 @@
 mod bounds;
+mod ray;
 
 pub use bounds::*;
+pub use ray::*;
 
 pub type Point2i = nalgebra::Point2<i32>;
 pub type Point2u = nalgebra::Point2<u32>;

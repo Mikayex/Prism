@@ -10,4 +10,4 @@ pub type Point3f = nalgebra::Point3<f32>;
 
 pub type Vector2f = nalgebra::Vector2<f32>;
 pub type Vector2i = nalgebra::Vector2<i32>;
-pub type Vector3f = nalgebra::Vector3<i32>;
+pub type Vector3f = nalgebra::Vector3<f32>;
